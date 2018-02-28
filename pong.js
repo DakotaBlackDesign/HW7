@@ -48,7 +48,7 @@ function initializeGame() {
 		x: width / 2,
 		y: height / 2,
 		xspeed: 2,
-		yspeed: random(1,3) ,
+		yspeed: random(1, 3),
 		d: 10
 	}
 	keyspressed = {
@@ -61,9 +61,6 @@ function initializeGame() {
 	player1score = 0
 	player2score = 0
 }
-
-
-
 
 function getUserInput() { //take keyboard input
 	if (keyIsDown(65)) {
@@ -95,22 +92,29 @@ function getUserInput() { //take keyboard input
 
 function updateGameState() { //check events and update positions
 	//'START_GAME'
-	print(GAMESTATE)
 	if (GAMESTATE == 'START_GAME') {
 		if (keyspressed.space) {
 			initializeGame();
 			GAMESTATE = 'IN_PLAY'
 		}
 	} else if (GAMESTATE == 'GAME_OVER') {
-		//PRINT THING
+		textSize(50);
+		textAlign(CENTER) 
+		text("GAME OVER", width / 2, height / 2);
+		textSize(18);
+		text("press SPACE to continue...", width / 2, height / 2 + 60);
 		if (keyspressed.space) {
 			GAMESTATE = 'START_GAME'
 		}
 	} else if (GAMESTATE == 'POINT_OVER') {
-		//PRINT THING
+		textSize(32);
+		textAlign(CENTER);
+		text("SCORE !!!", width / 2, 40);
+		textSize(18);
+		text("press SPACE to continue...", width / 2, height - 20);
 		ball.x = width / 2
 		ball.y = height / 2
-		if (player1score > 10 || player2score > 10) {
+		if (player1score >= 10 || player2score >= 10) {
 			GAMESTATE = 'GAME_OVER'
 		} else if (keyspressed.space) {
 			GAMESTATE = 'IN_PLAY'
@@ -167,7 +171,7 @@ function displayStuff() { // draw all the things
 	//draw ball
 	ellipse(ball.x, ball.y, ball.d)
 	textSize(32);
+	textAlign(CENTER);
 	text(player1score, 50, 40);
-	text(player2score, width-70, 40);
-} 
-	text(player1score, 10, 30);
+	text(player2score, width - 50, 40);
+}
