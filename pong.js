@@ -1,11 +1,12 @@
 var paddle1, paddle2, ball;
 var player1score, player2score;
 var bounds;
-var boop_oscillator;
+var boop,env,env2,delay;
 var point_sound;
 var win_sound;
 var point_sound;
 var keyspressed;
+
 
 var GAMESTATE = 'START_GAME';
 //'GAME_OVER','POINT_OVER','IN_PLAY'
@@ -14,7 +15,20 @@ var GAMESTATE = 'START_GAME';
 function setup() {
 	createCanvas(400, 400);
 	initializeGame();
-}
+	env = new p5.Env()
+	env.setADSR(0.001, 0.1, 0.5, 0.02);
+  env.setRange(0.5, 0);
+	env2 = new p5.Env()
+	env2.setADSR(0.2, 0.1, 0.5, 0.02);
+  env2.setRange(100, 50);
+	boop = new p5.Oscillator();
+	boop.setType('sine');
+  boop.freq(env2);
+  boop.amp(env);
+  boop.start();
+	delay = new p5.Delay();
+	delay.process(boop, 0.12, 0.2, 500);
+} 
 
 function draw() {
 	background(0);
@@ -22,7 +36,10 @@ function draw() {
 	updateGameState(); //check events and update positions
 	displayStuff(); // draw all the things
 }
-
+function trigger(){
+	env.play();
+	env2.play();
+}
 function initializeGame() {
 	bounds = {
 		x: 20,
@@ -48,7 +65,7 @@ function initializeGame() {
 		x: width / 2,
 		y: height / 2,
 		xspeed: 2,
-		yspeed: random(1, 3),
+		yspeed: 2,
 		d: 10
 	}
 	keyspressed = {
@@ -120,17 +137,13 @@ function updateGameState() { //check events and update positions
 			GAMESTATE = 'IN_PLAY'
 		}
 	} else { //'IN_PLAY'
-
-		//update ball position
-		ball.x = ball.x + ball.xspeed
-		ball.y = ball.y + ball.yspeed
-
 		//check ball hit paddle
-		if ((ball.x == bounds.w - ball.d / 2 - paddle2.w &&
-				ball.y > paddle2.y && ball.y < paddle2.y + paddle2.l) ||
-			(ball.x == bounds.x + ball.d / 2 + paddle2.w &&
-				ball.y > paddle1.y && ball.y < paddle1.y + paddle1.l)) {
+		if ((ball.x == (bounds.w - 6)) &&
+				(ball.y >= paddle2.y) && (ball.y <= (paddle2.y + paddle2.l)) ||
+			(ball.x == (bounds.x + 12)) &&
+				(ball.y >= paddle1.y) && (ball.y <= (paddle1.y + paddle1.l))) {
 			ball.xspeed = -ball.xspeed
+			trigger();
 		}
 		if (ball.x < bounds.x - 10) {
 			player2score += 1
@@ -140,10 +153,14 @@ function updateGameState() { //check events and update positions
 			player1score += 1
 			GAMESTATE = 'POINT_OVER'
 		}
+		//update ball position
+		ball.x = ball.x + ball.xspeed
+		ball.y = ball.y + ball.yspeed
 
 		//check ball hit top and bottom
 		if (ball.y <= bounds.y || ball.y >= bounds.h) {
 			ball.yspeed = -ball.yspeed
+			trigger();
 		}
 
 		//update paddle position
