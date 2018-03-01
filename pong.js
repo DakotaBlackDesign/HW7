@@ -9,6 +9,7 @@ var keyspressed;
 var spin;
 var factor;
 var plusOrMinus;
+var t = 4
 
 var GAMESTATE = 'START_GAME';
 //'GAME_OVER','POINT_OVER','IN_PLAY'
@@ -107,7 +108,9 @@ function getUserInput() { //take keyboard input
 	} else {
 		keyspressed.space = false;
 	}
+	
 	paddleUpdate();
+	
 }
 
 function updateGameState() { //check events and update positions
@@ -189,19 +192,50 @@ function updateGameState() { //check events and update positions
 
 function paddleUpdate(){
 //update paddle position
-		if (keyspressed.a) {
-			paddle1.y -= 6
+		if (keyspressed.a) { 
+			paddle1.y -= t
+			t += 0.1	
+			print(t)
 		}
 		if (keyspressed.z) {
-			paddle1.y += 6
+			paddle1.y += t
+			t += 0.1
 		}
 		if (keyspressed.k) {
-			paddle2.y -= 6
+			paddle2.y -= t
+			t += 0.1
 		}
 		if (keyspressed.m) {
-			paddle2.y += 6
+			paddle2.y += t
+			t += 0.1
+		}
+	
+	paddleStop();
+}
+
+function paddleStop(){
+	if (paddle1.y < bounds.y) {
+			paddle1.y = bounds.y
+		
+		}
+	if (paddle1.y > bounds.h - paddle1.l ) {
+			paddle1.y = bounds.h - paddle1.l
+		
+		}
+	if (paddle2.y < bounds.y) {
+			paddle2.y = bounds.y
+		
+		}
+	if (paddle2.y > bounds.h - paddle2.l ) {
+			paddle2.y = bounds.h - paddle2.l
+		
 		}
 }
+	
+function keyReleased() {
+	t = 4
+}
+	
 function displayStuff() { // draw all the things
 	fill(255)
 	//draw paddle 1
