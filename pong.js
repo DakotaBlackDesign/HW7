@@ -147,8 +147,8 @@ function updateGameState() { //check events and update positions
 		//print("xspeed =", ball.xspeed,"  yspeed =", ball.yspeed)
 		
 	
-		if ((ball.x > (bounds.w - 6) && ball.x < bounds.w) &&
-				(ball.y >= paddle2.y) && (ball.y <= (paddle2.y + paddle2.l))){ 
+		if ((ball.x > (bounds.w - 5) && ball.x < bounds.w) &&
+				(ball.y >= paddle2.y-2) && (ball.y <= (paddle2.y + paddle2.l+2))){ 
 			spin = abs(paddle2.y + paddle2.l/2 - ball.y)
 			factor = map(spin,0,25,1.25,0.85)
 			ball.xspeed = -(ball.xspeed*factor)
@@ -156,8 +156,8 @@ function updateGameState() { //check events and update positions
 			print(spin)
 	    }
 	
-		if ((ball.x < (bounds.x + 11) && ball.x > bounds.x) &&
-				(ball.y >= paddle1.y) && (ball.y <= (paddle1.y + paddle1.l))){
+		if ((ball.x < (bounds.x + 10) && ball.x > bounds.x+5) &&
+				(ball.y >= paddle1.y-2) && (ball.y <= (paddle1.y + paddle1.l+2))){
 			spin = abs(paddle1.y + paddle1.l/2 - ball.y)
 			factor = map(spin,0,25,1.25,0.85)
 			ball.xspeed = -(ball.xspeed*factor)
