@@ -2,6 +2,7 @@ var paddle1, paddle2, ball;
 var player1score, player2score;
 var bounds;
 var boop,env,env2,delay;
+var brap,env3,env4;
 var point_sound;
 var win_sound;
 var point_sound;
@@ -24,11 +25,22 @@ function setup() {
 	env2 = new p5.Env()
 	env2.setADSR(0.2, 0.1, 0.5, 0.02);
 	env2.setRange(100, 50);
+	env3 = new p5.Env()
+	env3.setADSR(0.001, 0.1, 0.5, 0.2);
+	env3.setRange(0.5, 0);
+	env4 = new p5.Env()
+	env4.setADSR(0.2, 0.1, 0.5, 0.2);
+	env4.setRange(300, 10);
 	boop = new p5.Oscillator();
 	boop.setType('sine');
 	boop.freq(env2);
 	boop.amp(env);
 	boop.start();
+	brap = new p5.Oscillator();
+	brap.setType('tri');
+	brap.freq(env4);
+	brap.amp(env3);
+	brap.start();
 	delay = new p5.Delay();
 	delay.process(boop, 0.12, 0.2, 500);
 } 
@@ -39,9 +51,13 @@ function draw() {
 	updateGameState(); //check events and update positions
 	displayStuff(); // draw all the things
 }
-function trigger(){
+function triggerboop(){
 	env.play();
 	env2.play();
+}
+function triggerbrap(){
+	env3.play();
+	env4.play();
 }
 function initializeGame() {
 	bounds = {
@@ -152,7 +168,7 @@ function updateGameState() { //check events and update positions
 			spin = abs(paddle2.y + paddle2.l/2 - ball.y)
 			factor = map(spin,0,25,1.25,0.85)
 			ball.xspeed = -(ball.xspeed*factor)
-			trigger();
+			triggerboop();
 			print(spin)
 	    }
 	
@@ -161,13 +177,14 @@ function updateGameState() { //check events and update positions
 			spin = abs(paddle1.y + paddle1.l/2 - ball.y)
 			factor = map(spin,0,25,1.25,0.85)
 			ball.xspeed = -(ball.xspeed*factor)
-			trigger();
+			triggerboop();
 		}
 		if (ball.x < bounds.x - 10) {
 			player2score += 1
 			ball.xspeed = random(2,2.3)
 			plusOrMinus = Math.random() < 0.5 ? -1 : 1;
 			ball.yspeed = random(2,2.3) * plusOrMinus
+			triggerbrap()
 			GAMESTATE = 'POINT_OVER'
 		}
 		if (ball.x > bounds.w + 10) {
@@ -175,6 +192,7 @@ function updateGameState() { //check events and update positions
 			ball.xspeed = -random(2,2.3) 
 			plusOrMinus = Math.random() < 0.5 ? -1 : 1;
 			ball.yspeed = random(2,2.3) * plusOrMinus
+			triggerbrap()
 			GAMESTATE = 'POINT_OVER'
 		}
 		//update ball position
@@ -184,7 +202,7 @@ function updateGameState() { //check events and update positions
 		//check ball hit top and bottom
 		if (ball.y <= bounds.y || ball.y >= bounds.h) {
 			ball.yspeed = -ball.yspeed
-			trigger();
+			triggerboop();
 		}
 		
 	}
