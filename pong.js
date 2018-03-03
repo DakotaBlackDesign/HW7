@@ -2,7 +2,7 @@ var paddle1, paddle2, ball;
 var player1score, player2score;
 var bounds;
 var boop,env,env2,delay;
-var brap,env3,env4;
+var brap,env3,env4,delay1;
 var point_sound;
 var win_sound;
 var point_sound;
@@ -10,7 +10,7 @@ var keyspressed;
 var spin;
 var factor;
 var plusOrMinus;
-var t = 4
+var t = 5
 
 var GAMESTATE = 'START_GAME';
 //'GAME_OVER','POINT_OVER','IN_PLAY'
@@ -24,12 +24,12 @@ function setup() {
 	env.setRange(0.5, 0);
 	env2 = new p5.Env()
 	env2.setADSR(0.2, 0.1, 0.5, 0.02);
-	env2.setRange(100, 50);
+	env2.setRange(10, 50);
 	env3 = new p5.Env()
 	env3.setADSR(0.001, 0.1, 0.5, 0.2);
 	env3.setRange(0.5, 0);
 	env4 = new p5.Env()
-	env4.setADSR(0.2, 0.1, 0.5, 0.2);
+	env4.setADSR(0.01, 0.2, 0.5, 0.2);
 	env4.setRange(300, 10);
 	boop = new p5.Oscillator();
 	boop.setType('sine');
@@ -43,6 +43,8 @@ function setup() {
 	brap.start();
 	delay = new p5.Delay();
 	delay.process(boop, 0.12, 0.2, 500);
+	delay1 = new p5.Delay();
+	delay1.process(brap, 0.2, 0.3, 2300);
 } 
 
 function draw() {
@@ -51,14 +53,17 @@ function draw() {
 	updateGameState(); //check events and update positions
 	displayStuff(); // draw all the things
 }
+
 function triggerboop(){
 	env.play();
 	env2.play();
 }
+
 function triggerbrap(){
 	env3.play();
 	env4.play();
 }
+
 function initializeGame() {
 	bounds = {
 		x: 20,
@@ -83,10 +88,10 @@ function initializeGame() {
 	ball = {
 		x: width / 2,
 		y: height / 2,
-		xspeed: 2,
-		yspeed: 2,
+		xspeed: random(1.8,2),
+		yspeed: random(1.8,2),
 		d: 10
-	}
+	} 
 	keyspressed = {
 		a: false,
 		z: false,
@@ -138,7 +143,7 @@ function updateGameState() { //check events and update positions
 		}
 	} else if (GAMESTATE == 'GAME_OVER') {
 		textSize(50);
-		textAlign(CENTER) 
+		textAlign(CENTER)
 		text("GAME OVER", width / 2, height / 2);
 		textSize(18);
 		text("press SPACE to continue...", width / 2, height / 2 + 60);
@@ -159,17 +164,17 @@ function updateGameState() { //check events and update positions
 			GAMESTATE = 'IN_PLAY'
 		}
 	} else { //'IN_PLAY'
+		//update ball position
+		ball.x = ball.x + ball.xspeed
+		ball.y = ball.y + ball.yspeed
 		//check ball hit paddle
 		//print("xspeed =", ball.xspeed,"  yspeed =", ball.yspeed)
-		
-	
 		if ((ball.x > (bounds.w - 5) && ball.x < bounds.w) &&
 				(ball.y >= paddle2.y-2) && (ball.y <= (paddle2.y + paddle2.l+2))){ 
 			spin = abs(paddle2.y + paddle2.l/2 - ball.y)
 			factor = map(spin,0,25,1.25,0.85)
 			ball.xspeed = -(ball.xspeed*factor)
 			triggerboop();
-			print(spin)
 	    }
 	
 		if ((ball.x < (bounds.x + 10) && ball.x > bounds.x+5) &&
@@ -181,17 +186,17 @@ function updateGameState() { //check events and update positions
 		}
 		if (ball.x < bounds.x - 10) {
 			player2score += 1
-			ball.xspeed = random(2,2.3)
+			ball.xspeed = random(1.8,2)
 			plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-			ball.yspeed = random(2,2.3) * plusOrMinus
+			ball.yspeed = random(1.8,2) * plusOrMinus
 			triggerbrap()
 			GAMESTATE = 'POINT_OVER'
 		}
 		if (ball.x > bounds.w + 10) {
 			player1score += 1
-			ball.xspeed = -random(2,2.3) 
+			ball.xspeed = -random(1.8,2) 
 			plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-			ball.yspeed = random(2,2.3) * plusOrMinus
+			ball.yspeed = random(1.8,2) * plusOrMinus
 			triggerbrap()
 			GAMESTATE = 'POINT_OVER'
 		}
@@ -212,8 +217,8 @@ function paddleUpdate(){
 //update paddle position
 		if (keyspressed.a) { 
 			paddle1.y -= t
-			t += 0.1	
-			print(t)
+			t += 0.1 	
+		
 		}
 		if (keyspressed.z) {
 			paddle1.y += t
@@ -251,7 +256,7 @@ function paddleStop(){
 }
 	
 function keyReleased() {
-	t = 4
+	t = 5
 }
 	
 function displayStuff() { // draw all the things
